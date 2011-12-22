@@ -1,0 +1,13 @@
+{
+  "name": "FnStuff",
+  "description": "Experimental function argument structure helper for Javascript/Coffeescript",
+  "version": "0.0.1alpha",
+  "author": "Jae Kwon <jkwon.work@gmail.com>",
+  "repository": {"type": "git", "url": "git://github.com/jaekwon/fnstuff.git"},
+  "dependencies": {"coffee-script": ">= 1.1.3"},
+  "keywords": ["argument", "type checking", "function", "node.js", "coffeescript"],
+  "main": "./lib/fnstuff",
+  "engines": {"node": ">= 0.4.7"},
+  "contributors": [
+  ]
+}
