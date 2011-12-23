@@ -105,6 +105,6 @@ assert = require 'assert'
         throw new Error "Fn received extra arguments from #0+#{argumentIndex} (#{arguments.length} total): #{arguments[argumentIndex]}"
 
       # Call fn with collected args.
-      return fn(toPass...)
+      return fn.apply(this, toPass)
 
   return if fn? then wrapFn(fn) else wrapFn
