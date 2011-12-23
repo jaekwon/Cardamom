@@ -1,5 +1,5 @@
 {
-  "name": "FnStuff",
+  "name": "fnstuff",
   "description": "Experimental function argument structure helper for Javascript/Coffeescript",
   "version": "0.0.1alpha",
   "author": "Jae Kwon <jkwon.work@gmail.com>",
