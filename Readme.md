@@ -1,13 +1,14 @@
 Allows the declaration of argument structure.
 
--   X     : any type. X is a placeholder for the argument name (not used)
--  {X}    : object type
--  "X"    : string type
--  X->    : function type
--     ?   : arg can be 'undefined'
-- [    ]  : arg is optional (can be left out)
+    -   X     : any type. X is a placeholder for the argument name (not used)
+    -  {X}    : object type
+    -  "X"    : string type
+    -  X->    : function type
+    -     ?   : arg can be 'undefined'
+    - [    ]  : arg is optional (can be left out)
 
-e.g. myfunc = Fn ' "name" [{options}?] callback-> ', (name, options, callback) ->
+e.g.:
+     myfunc = Fn ' "name" [{options}?] callback-> ', (name, options, callback) ->
 
 The name can be missing from the argument syntax, so the above is
 the same as...
