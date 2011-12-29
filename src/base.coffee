@@ -1,8 +1,25 @@
 # New-style Classes
+#
 # Benefits:
-#  - Avoid the usage of 'name: =>' for bound-method declarations, which is inconsistent with the rest of CoffeeScript.
-#  - Decorators work flawlessly with bound methods.
-#  - Declarative syntax for methods, for more literate code.
+#
+# -  Avoid the usage of 'name: =>' for bound-method declarations, which is inconsistent with the rest of CoffeeScript.
+# -  Decorators work flawlessly with bound methods.
+# -  Declarative syntax for methods, for more literate code.
+#
+# Usage:
+#
+#     class Foo extends Base
+#
+#       @instance
+#         info:     -> "Foo.info:#{this}"
+#         toString: -> "<Foo>"
+#
+#       @class
+#         toString: -> "[class:Foo]"
+#
+#       @static
+#         static:   -> "static:#{this}" # depends on how the function is invoked
+#
 
 {clone, extend} = require 'underscore'
 
