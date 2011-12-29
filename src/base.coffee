@@ -20,6 +20,14 @@
 #       @static
 #         static:   -> "static:#{this}" # depends on how the function is invoked
 #
+#    f = new Foo()
+#    f_info = f.info
+#    f_static = f.static
+#    console.log f.info()    # Foo.info:<Foo>
+#    console.log f_info()    # Foo.info:<Foo>
+#    console.log f.clazz()   # clazz:[class:Foo]
+#    console.log f.static()  # static:<Foo>
+#    console.log f_static()  # static:[object global]
 
 {clone, extend} = require 'underscore'
 
