@@ -5,6 +5,7 @@ Things are still changing. Fast.
 New-style Classes for CoffeeScript
 
 Benefits:
+
 *  Avoid the usage of 'name: =>' for bound-method declarations, which is inconsistent with the rest of CoffeeScript.
 *  Decorators work flawlessly with bound methods.
 *  Declarative syntax for methods, for more literate code.
