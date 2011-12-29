@@ -64,20 +64,27 @@ Allows the declaration of argument structure.
 
 e.g.:
 
-     myfunc = Fn ' "name" [{options}?] callback-> ', (name, options, callback) ->
+```coffeescript
+myfunc = Fn ' "name" [{options}?] callback-> ', (name, options, callback) ->
+```
 
 The name can be missing from the argument syntax, so the above is
 the same as...
 
-     myfunc = Fn ' "" [{}?] -> ', (foo, options, cb) ->
+```coffeescript
+myfunc = Fn ' "" [{}?] -> ', (foo, options, cb) ->
+```
 
 Missing arguments are always passed in as 'undefined'.
 
-     myfunc = Fn ' foo bar ', (foo, bar) -> console.log "#{foo} #{bar}"
-     myfunc('hello')
-     > 'hello undefined'
+```coffeescript
+myfunc = Fn ' foo bar ', (foo, bar) -> console.log "#{foo} #{bar}"
+myfunc('hello') # hello undefined
+```
 
 Extra arguments throw an error.
 
-     myfunc = Fn ' foo bar ', (foo, bar) -> console.log "#{foo} #{bar}"
-     myfunc('hello', 'coffee', 'donut') # throws error
+```coffeescript
+myfunc = Fn ' foo bar ', (foo, bar) -> console.log "#{foo} #{bar}"
+myfunc('hello', 'coffee', 'donut') # throws error
+```
