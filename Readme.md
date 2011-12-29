@@ -1,3 +1,16 @@
+Things are still changing. Fast.
+
+### Base
+
+New-style Classes for CoffeeScript
+
+Benefits:
+ - Avoid the usage of 'name: =>' for bound-method declarations, which is inconsistent with the rest of CoffeeScript.
+ - Decorators work flawlessly with bound methods.
+ - Declarative syntax for methods, for more literate code.
+
+### Fn
+
 Allows the declaration of argument structure.
 
     -   X     : any type. X is a placeholder for the argument name (not used)

@@ -1,4 +1,4 @@
-{Fn} = require 'fnstuff'
+{Base, Fn} = require 'cardamom'
 assert = require 'assert'
 
 @run = ->
