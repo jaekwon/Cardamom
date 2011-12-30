@@ -30,29 +30,37 @@
 #    console.log f_static()  # static:[object global]
 
 {clone, extend} = require 'underscore'
-
+  
 # Base class for new-style classes.
-class @Base
+@Base = class Base
 
   @instance = (methods) ->
-    # create a new @__methods for each subclass
-    if @__methods__class != this
-      @__methods__class = this
-      @__methods = if @__methods then clone(@__methods) else {}
-    extend @__methods, methods
+    if arguments.length > 1
+      methods = {}
+      methods[arguments[0]] = arguments[1]
+    if @__Base__class != this
+      @__Base__class = this
+      @__Base__instanceMethods = if @__Base__instanceMethods then clone(@__Base__instanceMethods) else {}
+    extend @__Base__instanceMethods, methods
     extend this::, methods
 
   @static = (methods) ->
+    if arguments.length > 1
+      methods = {}
+      methods[arguments[0]] = arguments[1]
     extend this::, methods
 
   @class = (methods) ->
+    if arguments.length > 1
+      methods = {}
+      methods[arguments[0]] = arguments[1]
     extend this, methods
 
   constructor: ->
     @bindInstanceMethods()
 
   bindInstanceMethods: =>
-    if not @__methods__bound
-      @__methods__bound = true
-      for name, func of @constructor.__methods
+    if not @__Base__bound
+      @__Base__bound = true
+      for name, func of @constructor.__Base__instanceMethods
         @[name] = func.bind @
