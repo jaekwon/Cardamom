@@ -52,4 +52,15 @@ assert = require 'assert'
     assert.equal  (   fn 1, -> 'a fn'),                  '1 undefined function'
     assert.equal  (   fn 1),                             '1 undefined undefined'
 
+  # SPLATS
+  do ->
+    assert.throws (-> Fn 'foo bar... baz', ->),          'Splat must be the last argument'
+
+  fn = Fn 'foo bar baz...', (foo, bar, baz...) -> "#{foo} #{bar} #{baz instanceof Array} #{baz}"
+  do ->
+    assert.equal  (   fn 1, 2, 3, 4),                    '1 2 true 3,4'
+    assert.equal  (   fn 1, 2, 3),                       '1 2 true 3'
+    assert.equal  (   fn 1, 2),                          '1 2 true '
+    assert.equal  (   fn 1, 2, undefined, undefined),    '1 2 true ,'
+
   console.log "Tests ok!"
