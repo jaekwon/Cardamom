@@ -84,11 +84,10 @@ myfunc('hello') # hello undefined
 ```
 
 Extra arguments throw an error, unless the last argument is a splat.
-```coffeescript
-myfunc = Fn ' foo bar... ', (foo, bar...) -> ...
-```
 
 ```coffeescript
 myfunc = Fn ' foo bar ', (foo, bar) -> console.log "#{foo} #{bar}"
 myfunc('hello', 'coffee', 'donut') # throws error
+myfunc = Fn ' foo bar... ', (foo, bar...) -> ...
+myfunc('hello', 'coffee', 'donut') # OK
 ```
