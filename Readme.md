@@ -55,12 +55,13 @@ console.log b.clazz()   # clazz:[class:Foo]
 
 Allows the declaration of argument structure.
 
-    -   X     : any type. X is a placeholder for the argument name (not used)
-    -  {X}    : object type
-    -  "X"    : string type
-    -  X->    : function type
-    -     ?   : arg can be 'undefined'
-    - [    ]  : arg is optional (can be left out)
+    -   X      : any type. X is a placeholder for the argument name (not used)
+    -  {X}     : object type
+    -  "X"     : string type
+    -  X->     : function type
+    -     ?    : arg can be 'undefined'
+    - [    ]   : arg is optional (can be left out)
+    -      ... : splat
 
 e.g.:
 
@@ -82,7 +83,10 @@ myfunc = Fn ' foo bar ', (foo, bar) -> console.log "#{foo} #{bar}"
 myfunc('hello') # hello undefined
 ```
 
-Extra arguments throw an error.
+Extra arguments throw an error, unless the last argument is a splat.
+```coffeescript
+myfunc = Fn ' foo bar... ', (foo, bar...) -> ...
+```
 
 ```coffeescript
 myfunc = Fn ' foo bar ', (foo, bar) -> console.log "#{foo} #{bar}"

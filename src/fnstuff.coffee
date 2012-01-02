@@ -6,8 +6,8 @@ assert = require 'assert'
 # -  "X"     : string type
 # -  X->     : function type
 # -     ?    : arg can be 'undefined'
-# - [     ]  : arg is optional (can be left out)
-# -     ...  : splat
+# - [    ]   : arg is optional (can be left out)
+# -      ... : splat
 #
 # e.g. myfunc = Fn ' "name" [{options}?] callback-> ', (name, options, callback) ->
 #
