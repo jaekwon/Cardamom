@@ -34,7 +34,7 @@
 # Base class for new-style classes.
 @Base = class Base
 
-  @instance = (methods) ->
+  @instance = @i = (methods) ->
     if arguments.length > 1
       methods = {}
       methods[arguments[0]] = arguments[1]
@@ -44,13 +44,13 @@
     extend @__Base__instanceMethods, methods
     extend this::, methods
 
-  @static = (methods) ->
+  @static = @s = (methods) ->
     if arguments.length > 1
       methods = {}
       methods[arguments[0]] = arguments[1]
     extend this::, methods
 
-  @class = (methods) ->
+  @class = @c = (methods) ->
     if arguments.length > 1
       methods = {}
       methods[arguments[0]] = arguments[1]
