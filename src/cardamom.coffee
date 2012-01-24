@@ -2,6 +2,7 @@
 @Bnd = require('./bnd').Bnd
 @Base = require('./base').Base
 @local = (fn) -> fn()
+@ErrorBase = require('./errors').ErrorBase
 
 EE = require('events').EventEmitter
 @eventful = (obj) ->
