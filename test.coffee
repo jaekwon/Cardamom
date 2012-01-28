@@ -1,4 +1,4 @@
-{Bnd, Base, Fn} = require 'cardamom'
+{B, Fn} = require 'cardamom'
 assert = require 'assert'
 
 @run = ->
@@ -66,44 +66,15 @@ assert = require 'assert'
   console.log "Tests ok!"
 
 
-  # Test Bnd
+  # Test B(ind)
   do ->
     class Foo
-      bnd = new Bnd
 
-      constructor: ->
-        bnd.to this
-
-      foo: bnd -> "#{@}"
+      foo:B -> "#{@}"
 
       toString: -> '<Foo>'
 
-    f = new Foo
-    f_foo = f.foo
-    assert.equal f_foo(), f.foo()
-
-  # Test Bnd object-style, error.
-  do ->
-    assert.throws ->
-      class Foo
-        bnd = new Bnd
-        bnd
-          foo: -> "#{@}"
-          bar: -> 'bar'
-    , 'object-style Bnd requires passing in the class'
-
-  # Test Bnd object-style
-  do ->
-    class Foo
-      bnd = new Bnd this
-
-      constructor: ->
-        bnd.to this
-
-      bnd
-        foo: -> "#{@}"
-
-      toString: -> '<Foo>'
+      B.ind @
 
     f = new Foo
     f_foo = f.foo

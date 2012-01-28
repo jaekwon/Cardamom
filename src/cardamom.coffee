@@ -1,6 +1,5 @@
 @Fn = require('./fnstuff').Fn
-@Bnd = require('./bnd').Bnd
-@Base = require('./base').Base
+@B = require('./bind').B
 @local = (fn) -> fn()
 @ErrorBase = require('./errors').ErrorBase
 
