@@ -1,4 +1,4 @@
-{B, Fn} = require 'cardamom'
+{B, Fn, clazz} = require 'cardamom'
 assert = require 'assert'
 
 @run = ->
@@ -79,3 +79,31 @@ assert = require 'assert'
     f = new Foo
     f_foo = f.foo
     assert.equal f_foo(), f.foo()
+
+  # Test clazz
+  do ->
+    initCalled = false
+
+    Foo = clazz 'Foo', ->
+      init: ->
+        initCalled = true
+      sayHi$: ->
+        "Hi, I am #{this}"
+      toString: -> "Foo"
+    f = new Foo()
+
+    assert.ok initCalled
+    assert.ok f instanceof Foo
+    assert.ok f.sayHi() is "Hi, I am Foo"
+    f_sayHi = f.sayHi
+    assert.ok f_sayHi() is "Hi, I am Foo"
+
+    Bar = clazz 'Bar', Foo, ->
+      init: ->
+        @super.init()
+        initCalled = 'heck yeah'
+      toString: -> "Bar"
+    b = new Bar()
+
+    assert.ok b.sayHi() is "Hi, I am Bar"
+    assert.ok initCalled, 'heck yeah'
