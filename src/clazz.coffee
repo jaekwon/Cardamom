@@ -46,16 +46,40 @@ Bar = clazz 'Bar', Foo, (supr) ->
     console.log "@", @, "@constructor", @constructor, "@super", @super
 
 ###
+
+# Bind methods to that, all functions which end in a '$' 
+bindMethods = (that, proto) ->
+  for name, method of proto when typeof method is 'function' and
+    name[name.length-1] is '$' and name.length > 1
+      that[name[...name.length-1]] = method.bind(that)
+      that[name[...name.length-1]].YAY = 'YAY'
+
+# Extend a prototype object with key/values from the childProtoTmpl.
+# In addition, occlude functions ending in '$' from base if
+# child defines the same function without a '$'.
+# This allows subclasses to declare unbound methods where
+# previously a baseclass declared a bound method -- the
+# instance will have an unbound method from the subclass, as expected.
+extendProto = (baseProto, childProtoTmpl) ->
+  for name, method of childProtoTmpl
+    baseProto[name] = method
+    if typeof method is 'function' and name[name.length-1] isnt '$' and
+      typeof baseProto[name+'$'] is 'function'
+        baseProto[name+'$'] = null
+
+ctor = (proto, fn) ->
+  fn.prototype = proto
+  fn
+
 @clazz = (name, base, protoFn) ->
   [protoFn, base] = [base, undefined] if protoFn is undefined
 
   constructor = ->
     if @ instanceof constructor
-      for name, method of @ when typeof method is 'function' and
-        name[name.length-1] is '$' and name.length > 1
-          @[name[...name.length-1]] = method.bind(@)
-      if constructor.prototype.hasOwnProperty 'init'
-        constructor.prototype.init.apply(@, arguments)
+      proto = constructor.prototype
+      bindMethods @, proto
+      if proto.hasOwnProperty 'init'
+        proto.init.apply(@, arguments)
       return @_newOverride if @_newOverride isnt undefined
       return @
     else
@@ -63,29 +87,19 @@ Bar = clazz 'Bar', Foo, (supr) ->
   constructor.name = name
 
   if base?
-    suprCtor = ->
-    suprCtor.prototype = base.prototype
-
-    protoCtor = ->
-      supr = undefined
+    suprCtor =  ctor base.prototype, ->
+    protoCtor = ctor base.prototype, ->
       @constructor = constructor
       Object.defineProperty @, 'super', enumerable: false, configurable: true, get: ->
-        if not supr?
-          supr = new suprCtor()
-          # allows for simple @super.foo() vs @super.foo.call(@)
-          for name, method of base.prototype when typeof method is 'function' and
-            name[name.length-1] is '$' and name.length > 1
-              supr[name[...name.length-1]] = method.bind(@)
-        return supr
+        supr = new suprCtor()
+        bindMethods supr, base.prototype
+        return @super = supr
       , set: (newValue) ->
-        Object.defineProperty supr, name, value: newValue
+        Object.defineProperty @, 'super', value: newValue
       @ # needed
-    protoCtor.prototype = base.prototype
-    proto = new protoCtor()
-    _.extend proto, protoFn.call(constructor, base.prototype)
-    constructor.prototype = proto
+    constructor.prototype = new protoCtor()
+    extendProto constructor.prototype, protoFn.call(constructor, base.prototype)
   else
-    proto = protoFn.call(constructor)
-    constructor.prototype = proto
+    constructor.prototype = protoFn.call constructor
 
   return constructor

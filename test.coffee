@@ -63,9 +63,6 @@ assert = require 'assert'
     assert.equal  (   fn 1, 2),                          '1 2 true '
     assert.equal  (   fn 1, 2, undefined, undefined),    '1 2 true ,'
 
-  console.log "Tests ok!"
-
-
   # Test B(ind)
   do ->
     class Foo
@@ -107,3 +104,26 @@ assert = require 'assert'
 
     assert.ok b.sayHi() is "Hi, I am Bar"
     assert.ok initCalled, 'heck yeah'
+
+  # Test clazz subclazz overriding a bound method
+  do ->
+    GLOBAL.toString = -> '[GLOBAL]'
+
+    Foo = clazz 'Foo', ->
+      foo$: -> "foo" + @
+      toString: -> 'Foo'
+
+    Bar = clazz 'Bar', Foo, ->
+      foo: -> "bar" + @
+      toString: -> 'Bar'
+
+    f = new Foo()
+    b = new Bar()
+    assert.equal f.foo(), 'fooFoo'
+    assert.equal b.foo(), 'barBar'
+    b_foo = b.foo
+    assert.equal b_foo(), 'bar[GLOBAL]'
+
+
+  # TESTS COMPLETE
+  console.log "Tests ok!"
