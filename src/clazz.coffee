@@ -52,7 +52,6 @@ bindMethods = (that, proto) ->
   for name, method of proto when typeof method is 'function' and
     name[name.length-1] is '$' and name.length > 1
       that[name[...name.length-1]] = method.bind(that)
-      that[name[...name.length-1]].YAY = 'YAY'
 
 # Extend a prototype object with key/values from the childProtoTmpl.
 # In addition, occlude functions ending in '$' from base if
@@ -72,19 +71,39 @@ ctor = (proto, fn) ->
   fn
 
 @clazz = (name, base, protoFn) ->
-  [protoFn, base] = [base, undefined] if protoFn is undefined
+  [name, base, protoFn] = [undefined, name, base] if typeof name isnt 'string'
+  [name, base, protoFn] = [name, undefined, base] if protoFn is undefined
 
-  constructor = ->
-    if @ instanceof constructor
-      proto = constructor.prototype
-      bindMethods @, proto
-      if proto.hasOwnProperty 'init'
-        proto.init.apply(@, arguments)
-      return @_newOverride if @_newOverride isnt undefined
-      return @
-    else
-      return new constructor arguments...
-  constructor.name = name
+  if not name?
+    constructor = ->
+      if @ instanceof constructor
+        proto = constructor.prototype
+        bindMethods @, proto
+        if proto.hasOwnProperty 'init'
+          proto.init.apply(@, arguments)
+        return @_newOverride if @_newOverride isnt undefined
+        return @
+      else
+        return new constructor arguments...
+  else
+    constructor = eval """
+      function #{name}() {
+        var proto;
+        if (this instanceof constructor) {
+          proto = constructor.prototype;
+          bindMethods(this, proto);
+          if (proto.hasOwnProperty('init')) proto.init.apply(this, arguments);
+          if (this._newOverride !== void 0) return this._newOverride;
+          return this;
+        } else {
+          return (function(func, args, ctor) {
+            ctor.prototype = func.prototype;
+            var child = new ctor, result = func.apply(child, args);
+            return typeof result === "object" ? result : child;
+          })(constructor, arguments, function() {});
+        }
+      }; #{name}
+    """
 
   if base?
     suprCtor =  ctor base.prototype, ->

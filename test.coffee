@@ -89,6 +89,7 @@ assert = require 'assert'
       toString: -> "Foo"
     f = new Foo()
 
+    assert.ok Foo.name is 'Foo'
     assert.ok initCalled
     assert.ok f instanceof Foo
     assert.ok f.sayHi() is "Hi, I am Foo"
@@ -102,6 +103,7 @@ assert = require 'assert'
       toString: -> "Bar"
     b = new Bar()
 
+    assert.ok Bar.name is 'Bar'
     assert.ok b.sayHi() is "Hi, I am Bar"
     assert.ok initCalled, 'heck yeah'
 
@@ -124,6 +126,16 @@ assert = require 'assert'
     b_foo = b.foo
     assert.equal b_foo(), 'bar[GLOBAL]'
 
+  # Test clazz anonymous
+  do ->
+    Foo = clazz ->
+      @bar = 'bar'
+      toString: -> 'Foo'
+
+    f = new Foo()
+    assert.equal Boolean(Foo.name), false
+    assert.equal Foo.bar, 'bar'
+    assert.equal ''+f, 'Foo'
 
   # TESTS COMPLETE
   console.log "Tests ok!"
