@@ -137,5 +137,16 @@ assert = require 'assert'
     assert.equal Foo.bar, 'bar'
     assert.equal ''+f, 'Foo'
 
+  # Test clazz level properties
+  do ->
+    hoop = []
+    Assist = clazz ->
+      @ball = '0'
+    Player = clazz Assist, ->
+      hoop.push @ball
+
+    assert.equal hoop[0], '0'
+      
+
   # TESTS COMPLETE
   console.log "Tests ok!"

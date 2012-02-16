@@ -106,6 +106,7 @@ ctor = (proto, fn) ->
     """
 
   if base?
+    constructor[key] = value for own key, value of base
     suprCtor =  ctor base.prototype, ->
     protoCtor = ctor base.prototype, ->
       @constructor = constructor
