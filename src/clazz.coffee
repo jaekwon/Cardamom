@@ -71,6 +71,7 @@ ctor = (proto, fn) ->
   fn
 
 @clazz = (name, base, protoFn) ->
+  [target, name] = name                           if name instanceof Array # TODO change Array to some escaped code syntax.
   [name, base, protoFn] = [undefined, name, base] if typeof name isnt 'string'
   [name, base, protoFn] = [name, undefined, base] if protoFn is undefined
 
@@ -121,5 +122,8 @@ ctor = (proto, fn) ->
     extendProto constructor.prototype, protoFn.call(constructor, base.prototype)
   else
     constructor.prototype = protoFn.call constructor
+
+  if target?
+    target[name] = constructor
 
   return constructor
