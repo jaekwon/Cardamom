@@ -74,6 +74,7 @@ ctor = (proto, fn) ->
   [target, name] = name                           if name instanceof Array # TODO change Array to some escaped code syntax.
   [name, base, protoFn] = [undefined, name, base] if typeof name isnt 'string'
   [name, base, protoFn] = [name, undefined, base] if protoFn is undefined
+  protoFn ||= (->)
 
   if not name?
     constructor = ->
