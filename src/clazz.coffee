@@ -17,6 +17,7 @@ This is another attempt to implement classes as a DSL.
    as long as you specify the method name (as in Python). 
 3. Metaprogramming is easier, for example dynamically creating bound methods
    is as easy as appending a '$' to the method name.
+4. Convenient getter/setter syntax.
 
 ## Declare a class Foo
 
@@ -49,9 +50,17 @@ Bar = clazz 'Bar', Foo, (supr) ->
 
 # Bind methods to that, all functions which end in a '$' 
 bindMethods = (that, proto) ->
-  for name, method of proto when typeof method is 'function' and
-    name[name.length-1] is '$' and name.length > 1
-      that[name[...name.length-1]] = method.bind(that)
+  for name, value of proto when name[name.length-1] is '$' and name.length > 1
+    name = name[...name.length-1]
+    # bound function
+    if typeof value is 'function'
+      that[name] = value.bind that
+    # getter/setter syntax
+    else if typeof value is 'object'
+      if value and (value.get or value.set or value.value)
+        value.enumerable = value.enum if value.enum?
+        value.configurable = value.conf if value.conf?
+        Object.defineProperty that, name, value
 
 # Extend a prototype object with key/values from the childProtoTmpl.
 # In addition, occlude functions ending in '$' from base if

@@ -147,6 +147,14 @@ assert = require 'assert'
 
     assert.equal hoop[0], '0'
       
+  # Test clazz getter/setter
+  do ->
+    Foo = clazz 'Foo', ->
+      bar$:
+        get: -> "bar.get"
+        set: -> "bar.set"
+    f = Foo()
+    assert.equal f.bar, 'bar.get'
 
   # TESTS COMPLETE
   console.log "Tests ok!"
