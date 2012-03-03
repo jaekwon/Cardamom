@@ -150,11 +150,12 @@ assert = require 'assert'
   # Test clazz getter/setter
   do ->
     Foo = clazz 'Foo', ->
+      init: (@bar) ->
       bar$:
-        get: -> "bar.get"
-        set: -> "bar.set"
-    f = Foo()
-    assert.equal f.bar, 'bar.get'
+        get: -> @_bar
+        set: (@_bar) ->
+    f = Foo("blah")
+    assert.equal f.bar, "blah"
 
   # TESTS COMPLETE
   console.log "Tests ok!"
