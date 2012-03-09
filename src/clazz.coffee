@@ -90,7 +90,7 @@ ctor = (proto, fn) ->
       if @ instanceof constructor
         proto = constructor.prototype
         bindMethods @, proto
-        if proto.hasOwnProperty 'init'
+        if proto.init
           proto.init.apply(@, arguments)
         return @_newOverride if @_newOverride isnt undefined
         return @
@@ -103,7 +103,7 @@ ctor = (proto, fn) ->
         if (this instanceof constructor) {
           proto = constructor.prototype;
           bindMethods(this, proto);
-          if (proto.hasOwnProperty('init')) proto.init.apply(this, arguments);
+          if (proto.init) proto.init.apply(this, arguments);
           if (this._newOverride !== void 0) return this._newOverride;
           return this;
         } else {
@@ -131,7 +131,12 @@ ctor = (proto, fn) ->
     constructor.prototype = new protoCtor()
     extendProto constructor.prototype, protoFn.call(constructor, base.prototype)
   else
-    constructor.prototype = protoFn.call constructor
+    protoCtor = ->
+      @constructor = constructor
+      @super = Object.prototype
+      @ # needed
+    constructor.prototype = new protoCtor()
+    extendProto constructor.prototype, protoFn.call(constructor, Object.prototype)
 
   if target?
     target[name] = constructor

@@ -157,5 +157,23 @@ assert = require 'assert'
     f = Foo("blah")
     assert.equal f.bar, "blah"
 
+  # Test clazz inheritance
+  do ->
+    Foo = clazz 'Foo', ->
+      init: (@bar) ->
+      toString: -> "#{@constructor.name}#{@bar}"
+    f = Foo("Bar")
+    assert.equal ''+f, 'FooBar'
+
+    Foo2 = clazz 'Foo2', Foo, ->
+      dontcare: ->
+    f2 = Foo2("Bar2")
+    assert.equal ''+f2, 'Foo2Bar2'
+
+    Foo3 = clazz 'Foo3', Foo2, ->
+      init: (bar) -> @bar = "(#{bar})"
+    f2 = Foo3("Bar3")
+    assert.equal ''+f2, 'Foo3(Bar3)'
+
   # TESTS COMPLETE
   console.log "Tests ok!"
