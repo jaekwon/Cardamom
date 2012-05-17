@@ -118,20 +118,16 @@ ctor = (proto, fn) ->
 
   if base?
     constructor[key] = value for own key, value of base
-    suprCtor =  ctor base.prototype, ->
     protoCtor = ctor base.prototype, ->
+      # creating the prototype...
       @constructor = constructor
-      Object.defineProperty @, 'super', enumerable: false, configurable: true, get: ->
-        supr = new suprCtor()
-        bindMethods supr, base.prototype
-        return @super = supr
-      , set: (newValue) ->
-        Object.defineProperty @, 'super', value: newValue
+      @super = base.prototype
       @ # needed
     constructor.prototype = new protoCtor()
     extendProto constructor.prototype, protoFn.call(constructor, base.prototype)
   else
     protoCtor = ->
+      # creating the prototype...
       @constructor = constructor
       @super = Object.prototype
       @ # needed
