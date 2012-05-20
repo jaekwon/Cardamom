@@ -1,7 +1,7 @@
 {
   "name": "cardamom",
   "description": "Experimental Coffeescript Prelude",
-  "version": "0.0.7b",
+  "version": "0.0.7c",
   "author": "Jae Kwon <jkwon.work@gmail.com>",
   "repository": {"type": "git", "url": "git://github.com/jaekwon/Cardamom.git"},
   "dependencies": {

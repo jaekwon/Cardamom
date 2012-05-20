@@ -1,53 +1,5 @@
 _ = require 'underscore'
 
-###
-
-This is another attempt to implement classes as a DSL.
-
-## The difference:
-
-1. super is @super (or supr, in the class body)
-2. use init, not constructor
-2. Method binding looks like this: boundMethod$: -> @ != GLOBAL
-
-## The benefits:
-
-1. You don't have to call super for instance method binding to work.
-2. Super no longer depends on lexical scope -- you can use @super anywhere,
-   as long as you specify the method name (as in Python). 
-3. Metaprogramming is easier, for example dynamically creating bound methods
-   is as easy as appending a '$' to the method name.
-4. Convenient getter/setter syntax.
-
-## Declare a class Foo
-
-Foo = clazz 'Foo', null, (supr) ->
-  @myStaticMethod = -> # is set on Foo
-
-  init: ->
-    console.log "Foo initializer"
-
-  foo$: -> # a bound method
-    console.log "@", @, "@barProp", @barProp, "instanceof Foo?", @ instanceof Foo
-
-  myClassMethod: => # this is bound to the class
-    
-## Extending Foo:
-
-Bar = clazz 'Bar', Foo, (supr) ->
-  barProp: 'barProp!'
-
-  init: (@bar='init:bar') ->
-    @super.init()
-    console.log "Bar initializer"
-
-  moo$: ->
-    console.log "@", @, "@constructor", @constructor, "@super", @super
-  boo: -> # an unbound method
-    console.log "@", @, "@constructor", @constructor, "@super", @super
-
-###
-
 # Bind methods to that, all functions which end in a '$' 
 bindMethods = (that, proto) ->
   for name, value of proto when name[name.length-1] is '$' and name.length > 1
@@ -55,25 +7,27 @@ bindMethods = (that, proto) ->
     # bound function
     if typeof value is 'function'
       that[name] = value.bind that
-    # getter/setter syntax
-    else if typeof value is 'object'
-      if value and (value.get or value.set or value.value)
-        value.enumerable = value.enum if value.enum?
-        value.configurable = value.conf if value.conf?
-        Object.defineProperty that, name, value
 
-# Extend a prototype object with key/values from the childProtoTmpl.
-# In addition, occlude functions ending in '$' from base if
-# child defines the same function without a '$'.
-# This allows subclasses to declare unbound methods where
-# previously a baseclass declared a bound method -- the
-# instance will have an unbound method from the subclass, as expected.
-extendProto = (baseProto, childProtoTmpl) ->
-  for name, method of childProtoTmpl
+# Extend a prototype object with key/values from childProtoProto.
+extendProto = (baseProto, childProtoProto) ->
+  # Occlude functions ending in '$' from base if
+  # child defines the same function without a '$'.
+  # This allows subclasses to declare unbound methods where
+  # previously a baseclass declared a bound method -- the
+  # instance will have an unbound method from the subclass, as expected.
+  for name, method of childProtoProto
     baseProto[name] = method
     if typeof method is 'function' and name[name.length-1] isnt '$' and
       typeof baseProto[name+'$'] is 'function'
         baseProto[name+'$'] = null
+  # Define properties on the prototype.
+  for name, value of childProtoProto when name[name.length-1] is '$' and name.length > 1
+    name = name[...name.length-1]
+    # getter/setter syntax
+    if typeof value is 'object' and (value.get or value.set or value.value)
+      value.enumerable = value.enum if value.enum?
+      value.configurable = value.conf if value.conf?
+      Object.defineProperty constructor.prototype, name, value
 
 ctor = (proto, fn) ->
   fn.prototype = proto
@@ -118,21 +72,16 @@ ctor = (proto, fn) ->
 
   if base?
     constructor[key] = value for own key, value of base
-    protoCtor = ctor base.prototype, ->
-      # creating the prototype...
-      @constructor = constructor
-      @super = base.prototype
-      @ # needed
-    constructor.prototype = new protoCtor()
-    extendProto constructor.prototype, protoFn.call(constructor, base.prototype)
   else
-    protoCtor = ->
-      # creating the prototype...
-      @constructor = constructor
-      @super = Object.prototype
-      @ # needed
-    constructor.prototype = new protoCtor()
-    extendProto constructor.prototype, protoFn.call(constructor, Object.prototype)
+    base = Object
+
+  protoCtor = ctor base.prototype, ->
+    # creating the prototype...
+    @constructor = constructor
+    @super = base.prototype
+    @ # needed
+  constructor.prototype = new protoCtor()
+  extendProto constructor.prototype, protoFn.call(constructor, base.prototype)
 
   if target?
     target[name] = constructor
