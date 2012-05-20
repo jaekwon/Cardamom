@@ -1,14 +1,14 @@
-### Clazz
+# Clazz
 
-This is another attempt to implement classes as a DSL.
+Yet another attempt to implement classes as a DSL.
 
-## The difference:
+### The difference:
 
 1. super is @super (or supr, in the class body)
-2. use init, not constructor
+2. use `init`, not `constructor`
 2. Method binding looks like this: boundMethod$: -> @ != GLOBAL
 
-## The benefits:
+### The benefits:
 
 1. You don't have to call super for instance method binding to work.
 2. Super no longer depends on lexical scope -- you can use @super anywhere,
@@ -17,7 +17,7 @@ This is another attempt to implement classes as a DSL.
    is as easy as appending a '$' to the method name.
 4. Convenient getter/setter syntax.
 
-## Declare a class Foo
+### Declare a class Foo
 
 ```coffeescript
 Foo = clazz 'Foo', null, (supr) ->
@@ -33,8 +33,8 @@ Foo = clazz 'Foo', null, (supr) ->
 
   myClassMethod: => # this is bound to the class
 ```
-    
-## Extending Foo:
+
+### Extending Foo:
 
 ```coffeescript
 Bar = clazz 'Bar', Foo, (supr) ->
@@ -49,10 +49,10 @@ Bar = clazz 'Bar', Foo, (supr) ->
   boo: -> # an unbound method
     console.log "@", @, "@constructor", @constructor, "@super", @super
 
-Note: Unlike methods bound with $:, properties bound with $: arent own properties of objects, but they are own properties of the prototype.
 ```
+Note: Unlike methods bound with $:, properties bound with $: arent own properties of objects, but they are own properties of the prototype.
 
-### Fn
+# Fn - experimental
 
 Allows the declaration of argument structure.
 
