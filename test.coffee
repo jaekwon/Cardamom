@@ -149,13 +149,24 @@ assert = require 'assert'
       
   # Test clazz getter/setter
   do ->
-    Foo = clazz 'Foo', ->
+    Foo1 = clazz 'Foo1', ->
       init: (@bar) ->
       bar$:
         get: -> @_bar
         set: (@_bar) ->
-    f = Foo("blah")
-    assert.equal f.bar, "blah"
+    f1 = Foo1("blah1")
+    assert.equal f1.bar, "blah1"
+    f1.bar = "blah2"
+    assert.equal f1.bar, "blah2"
+
+    Foo2 = clazz 'Foo2', Foo1, ->
+      init: ->
+      bar$:
+        get: -> "blah3"
+    f2 = Foo2()
+    assert.equal f2.bar, "blah3"
+    f2.bar = "blah4"
+    assert.equal f2.bar, "blah4"
 
   # Test clazz inheritance
   do ->

@@ -8,6 +8,10 @@ bindMethods = (that, proto) ->
     if typeof value is 'function'
       that[name] = value.bind that
 
+# Is the value a property descriptor?
+isPropertyDescriptor = (obj) ->
+  typeof obj is 'object' and (obj.get or obj.set or obj.value)
+
 # Extend a prototype object with key/values from childProtoProto.
 extendProto = (baseProto, childProtoProto) ->
   # Occlude functions ending in '$' from base if
@@ -24,9 +28,12 @@ extendProto = (baseProto, childProtoProto) ->
   for name, value of childProtoProto when name[name.length-1] is '$' and name.length > 1
     name = name[...name.length-1]
     # getter/setter syntax
-    if typeof value is 'object' and (value.get or value.set or value.value)
-      value.enumerable = value.enum if value.enum?
-      value.configurable = value.conf if value.conf?
+    if isPropertyDescriptor value
+      value.enumerable   ?= value.enum ? yes
+      value.configurable ?= value.conf ? yes
+      if value.configurable
+        value.set ?= (newValue) ->
+          Object.defineProperty this, name, {enumerable:yes, configurable:yes, value:newValue}
       Object.defineProperty constructor.prototype, name, value
 
 ctor = (proto, fn) ->
