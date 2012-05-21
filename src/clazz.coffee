@@ -29,12 +29,15 @@ extendProto = (baseProto, childProtoProto) ->
     name = name[...name.length-1]
     # getter/setter syntax
     if isPropertyDescriptor value
-      value.enumerable   ?= value.enum ? yes
-      value.configurable ?= value.conf ? yes
-      if value.configurable
-        value.set ?= (newValue) ->
-          Object.defineProperty this, name, {enumerable:yes, configurable:yes, value:newValue}
-      Object.defineProperty constructor.prototype, name, value
+      if value.value?
+        value.writable ?= yes
+      else
+        value.enumerable ?= yes
+        value.configurable ?= yes
+        if value.configurable
+          value.set ?= (newValue) ->
+            Object.defineProperty this, name, {writable:yes, enumerable:yes, configurable:yes, value:newValue}
+      Object.defineProperty baseProto, name, value
 
 ctor = (proto, fn) ->
   fn.prototype = proto
@@ -51,8 +54,7 @@ ctor = (proto, fn) ->
       if @ instanceof constructor
         proto = constructor.prototype
         bindMethods @, proto
-        if proto.init
-          proto.init.apply(@, arguments)
+        proto.init?.apply(@, arguments)
         return @_newOverride if @_newOverride isnt undefined
         return @
       else
@@ -64,7 +66,7 @@ ctor = (proto, fn) ->
         if (this instanceof constructor) {
           proto = constructor.prototype;
           bindMethods(this, proto);
-          if (proto.init) proto.init.apply(this, arguments);
+          if (typeof proto.init !== 'undefined' && proto.init !== null) proto.init.apply(this, arguments);
           if (this._newOverride !== void 0) return this._newOverride;
           return this;
         } else {
