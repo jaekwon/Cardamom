@@ -25,35 +25,39 @@ extendProto = (baseProto, childProtoProto) ->
     if typeof method is 'function' and name[name.length-1] isnt '$' and
       typeof baseProto[name+'$'] is 'function'
         baseProto[name+'$'] = null
-  # Define properties on the prototype.
+  # Define properties directly on the prototype.
   for name, value of childProtoProto when name[name.length-1] is '$' and name.length > 1
     name = name[...name.length-1]
     # getter/setter syntax
     if isPropertyDescriptor value
+      value.enumerable ?= yes
+      value.configurable ?= yes
       if value.value?
         value.writable ?= yes
-      else
-        value.enumerable ?= yes
-        value.configurable ?= yes
-        if value.configurable
-          value.set ?= (newValue) ->
-            Object.defineProperty this, name, {writable:yes, enumerable:yes, configurable:yes, value:newValue}
+      else if value.configurable
+        value.set ?= (newValue) ->
+          Object.defineProperty this, name, {writable:yes, enumerable:yes, configurable:yes, value:newValue}
       Object.defineProperty baseProto, name, value
 
 ctor = (proto, fn) ->
   fn.prototype = proto
   fn
 
+# protoFn:  The class body, a function that returns an object.
+#           The result is merged into the actual prototype.
 @clazz = (name, base, protoFn) ->
-  [target, name] = name                           if name instanceof Array # TODO change Array to some escaped code syntax.
   [name, base, protoFn] = [undefined, name, base] if typeof name isnt 'string'
   [name, base, protoFn] = [name, undefined, base] if protoFn is undefined
   protoFn ||= (->)
 
+  clazzDefined = no         # Ensure that clazz instantiation happens after
+                            #  the clazz prototype is completely defined.
+  proto        = undefined  # The clazz prototype
+
   if not name?
     constructor = ->
+      throw new Error "Can't create #{name} clazz instances in the clazz body." unless clazzDefined
       if @ instanceof constructor
-        proto = constructor.prototype
         bindMethods @, proto
         proto.init?.apply(@, arguments)
         return @_newOverride if @_newOverride isnt undefined
@@ -63,16 +67,15 @@ ctor = (proto, fn) ->
   else
     constructor = eval """
       function #{name}() {
-        var proto;
+        if (!clazzDefined) throw new Error("Can't create #{name} clazz instances in the clazz body.");
         if (this instanceof constructor) {
-          proto = constructor.prototype;
           bindMethods(this, proto);
           if (typeof proto.init !== 'undefined' && proto.init !== null) proto.init.apply(this, arguments);
           if (this._newOverride !== void 0) return this._newOverride;
           return this;
         } else {
           return (function(func, args, ctor) {
-            ctor.prototype = func.prototype;
+            ctor.prototype = proto;
             var child = new ctor, result = func.apply(child, args);
             return typeof result === "object" ? result : child;
           })(constructor, arguments, function() {});
@@ -90,10 +93,8 @@ ctor = (proto, fn) ->
     @constructor = constructor
     @super = base.prototype
     @ # needed
-  constructor.prototype = new protoCtor()
-  extendProto constructor.prototype, protoFn.call(constructor, base.prototype)
-
-  if target?
-    target[name] = constructor
+  constructor.prototype = proto = new protoCtor()
+  extendProto proto, protoFn.call(constructor, base.prototype)
+  clazzDefined = yes
 
   return constructor
