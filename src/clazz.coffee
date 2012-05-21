@@ -2,7 +2,8 @@ _ = require 'underscore'
 
 # Bind methods to that, all functions which end in a '$' 
 bindMethods = (that, proto) ->
-  for name, value of proto when name[name.length-1] is '$' and name.length > 1
+  for name of proto when name[name.length-1] is '$' and name.length > 1
+    value = that[name]
     name = name[...name.length-1]
     # bound function
     if typeof value is 'function'
