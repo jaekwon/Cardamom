@@ -186,5 +186,18 @@ assert = require 'assert'
     f2 = Foo3("Bar3")
     assert.equal ''+f2, 'Foo3(Bar3)'
 
+  # Test clazz extensions
+  do ->
+    Foo = clazz 'Foo', ->
+      init: ({@bar}) ->
+    f = new Foo(bar:'BAR')
+    assert.equal f.bar, 'BAR'
+    # extend!
+    Foo::extend
+      baz: 'BAZ'
+      bak$: get: -> 'BAK'
+    assert.equal f.baz, 'BAZ'
+    assert.equal f.bak, 'BAK'
+
   # TESTS COMPLETE
   console.log "Tests ok!"

@@ -13,31 +13,33 @@ bindMethods = (that, proto) ->
 isPropertyDescriptor = (obj) ->
   typeof obj is 'object' and (obj.get or obj.set or obj.value)
 
-# Extend a prototype object with key/values from childProtoProto.
-extendProto = (baseProto, childProtoProto) ->
-  # Occlude functions ending in '$' from base if
-  # child defines the same function without a '$'.
-  # This allows subclasses to declare unbound methods where
-  # previously a baseclass declared a bound method -- the
-  # instance will have an unbound method from the subclass, as expected.
-  for name, method of childProtoProto
-    baseProto[name] = method
-    if typeof method is 'function' and name[name.length-1] isnt '$' and
-      typeof baseProto[name+'$'] is 'function'
-        baseProto[name+'$'] = null
-  # Define properties directly on the prototype.
-  for name, value of childProtoProto when name[name.length-1] is '$' and name.length > 1
-    name = name[...name.length-1]
-    # getter/setter syntax
-    if isPropertyDescriptor value
-      value.enumerable ?= yes
-      value.configurable ?= yes
-      if value.value?
-        value.writable ?= yes
-      else if value.configurable
-        value.set ?= (newValue) ->
-          Object.defineProperty this, name, {writable:yes, enumerable:yes, configurable:yes, value:newValue}
-      Object.defineProperty baseProto, name, value
+makeSetValueFn = (name) -> (value) -> Object.defineProperty this, name, {writable:yes, enumerable:yes, configurable:yes, value:value}
+
+# Extend a prototype object (this) with key/values from protoProto.
+# This is responsible for `$:` bindings for properties and functions,
+# because they are set as properties on the clazz prototype.
+extendProto = (protoProto) ->
+  for name, value of protoProto
+    # Define properties directly on the prototype.
+    if name[name.length-1] is '$' and name.length > 1
+      name = name[...name.length-1]
+      # a bound function
+      if typeof value is 'function'
+        desc = {enumerable:yes, configurable:yes, set:makeSetValueFn(name)}
+        do (value) -> desc.get = -> value.bind this
+        Object.defineProperty this, name, desc
+      # getter/setter syntax
+      else if isPropertyDescriptor value
+        desc = value
+        desc.enumerable ?= yes
+        desc.configurable ?= yes
+        if desc.value?
+          desc.writable ?= yes
+        else if desc.configurable
+          desc.set ?= makeSetValueFn(name)
+        Object.defineProperty this, name, desc
+    else
+      this[name] = value
 
 ctor = (proto, fn) ->
   fn.prototype = proto
@@ -92,9 +94,10 @@ ctor = (proto, fn) ->
     # creating the prototype...
     @constructor = constructor
     @super = base.prototype
+    @extend = extendProto
     @ # needed
   constructor.prototype = proto = new protoCtor()
-  extendProto proto, protoFn.call(constructor, base.prototype)
+  extendProto.call proto, protoFn.call(constructor, base.prototype)
   clazzDefined = yes
 
   return constructor
