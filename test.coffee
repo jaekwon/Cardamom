@@ -99,7 +99,6 @@ assert = require 'assert'
     Bar = clazz 'Bar', Foo, ->
       init: ->
         @super.init()
-        initCalled = 'heck yeah'
       toString: -> "Bar"
     b = new Bar()
 
@@ -198,6 +197,19 @@ assert = require 'assert'
       bak$: get: -> 'BAK'
     assert.equal f.baz, 'BAZ'
     assert.equal f.bak, 'BAK'
+
+  # Test super bound methods
+  do ->
+    Foo = clazz 'Foo', ->
+      bar$: -> this
+    f = new Foo()
+    assert.ok f.bar() is f
+
+    Bar = clazz 'Bar', Foo, ->
+      bar: -> "NOT THIS"
+      baz: -> @super.bar()
+    b = new Bar()
+    assert.ok b.baz() is b
 
   # TESTS COMPLETE
   console.log "Tests ok!"
