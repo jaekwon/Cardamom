@@ -3,6 +3,8 @@
 @local = (fn) -> fn()
 @ErrorBase = require('./errors').ErrorBase
 @clazz = require('./clazz').clazz
+@colors = require('./colors')
+@bisect = require('./bisect')
 
 EE = require('events').EventEmitter
 @eventful = (obj) ->

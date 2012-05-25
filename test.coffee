@@ -1,4 +1,4 @@
-{B, Fn, clazz} = require 'cardamom'
+{B, Fn, clazz, bisect} = require 'cardamom'
 assert = require 'assert'
 
 @run = ->
@@ -210,6 +210,22 @@ assert = require 'assert'
       baz: -> @super.bar()
     b = new Bar()
     assert.ok b.baz() is b
+
+  # BISECT TESTS
+  do ->
+    a = [1,2,3,5]
+    bisect.insort_right a, 4
+    assert.equal ''+a, ''+[1,2,3,4,5]
+    bisect.insort_left a, 4
+    assert.equal ''+a, ''+[1,2,3,4,4,5]
+
+    # mod 10 comparatorish
+    cmp = (x, y) -> if x%10 < y%10 then -1 else if x%10 is y%10 then 0 else 1
+    bisect.insort_right a, 14, cmp:cmp
+    assert.equal ''+a, ''+[1,2,3,4,4,14,5]
+    bisect.insort_left a, 24, cmp:cmp
+    assert.equal ''+a, ''+[1,2,3,24,4,4,14,5]
+    assert.equal bisect.bisect_right(a, 4, cmp:cmp), 7
 
   # TESTS COMPLETE
   console.log "Tests ok!"
