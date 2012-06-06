@@ -13,4 +13,3 @@ _wrap_with = (code) ->
 @cyan = _wrap_with('36')
 @white = _wrap_with('37')
 @normal = (text) -> return text
-

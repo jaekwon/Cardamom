@@ -34,7 +34,7 @@ bindMethods = (that, proto) ->
     if typeof value is 'function'
       that[name] = value.bind that
 
-# Extend a prototype object (this) with key/values from protoProto.
+# Extend a prototype object (bound to @) with key/values from protoProto.
 # This is responsible for `$:` bindings for properties and functions,
 # because they are set as properties on the clazz prototype.
 extendProto = (protoProto) ->
@@ -45,10 +45,12 @@ extendProto = (protoProto) ->
       # a bound function
       if typeof value is 'function'
         desc =
-          enumerable:yes
-          configurable:yes
+          enumerable: yes
+          configurable: yes
           get: ->
-            value.bind _getThis(this)
+            boundFunc = value.bind _getThis(this)
+            boundFunc._name = name
+            return boundFunc
           set: (newValue) ->
             Object.defineProperty _getThis(this), name,
               writable:yes
@@ -79,6 +81,7 @@ extendProto = (protoProto) ->
                 value:newValue
         Object.defineProperty this, name, desc
     else
+      value._name = name if typeof value is 'function'
       this[name] = value
 
 # protoFn:  The class body, a function that returns an object.
@@ -133,7 +136,8 @@ extendProto = (protoProto) ->
     Object.defineProperty this, 'extend', value:extendProto, writable:yes, configurable:yes, enumerable:no
     @ # needed
   constructor.prototype = proto = new protoCtor()
-  extendProto.call proto, protoFn.call(constructor, base.prototype)
+  protoProto = protoFn.call(constructor, base.prototype)
+  extendProto.call proto, protoProto
 
   clazzDefined = yes
   return constructor
