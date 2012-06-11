@@ -143,4 +143,4 @@ extendProto = (protoProto) ->
   return constructor
 
 # make this available for non-clazz classes.
-@clazz.extend = (proto, protoProto) -> extendProto.call proto, protoProto
+@clazz.extend = (_class, protoProto) -> extendProto.call _class.prototype, protoProto
