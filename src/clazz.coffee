@@ -141,3 +141,6 @@ extendProto = (protoProto) ->
 
   clazzDefined = yes
   return constructor
+
+# make this available for non-clazz classes.
+@clazz.extend = extendProto
