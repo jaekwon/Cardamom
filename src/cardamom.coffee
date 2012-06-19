@@ -2,9 +2,10 @@
 @B = require('./bind').B
 @local = (fn) -> fn()
 @ErrorBase = require('./errors').ErrorBase
-@clazz = require('./clazz').clazz
+@clazz = clazz = require('./clazz').clazz
 @colors = require('./colors')
 @bisect = require('./bisect')
+@collections = require('./collections')
 
 EE = require('events').EventEmitter
 @eventful = (obj) ->
