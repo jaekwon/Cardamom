@@ -80,7 +80,11 @@ extendProto = (protoProto) ->
         Object.defineProperty this, name, desc
     else
       value._name = name if typeof value is 'function'
-      this[name] = value
+      Object.defineProperty this, name,
+        enumerable:no
+        configurable:yes
+        writable:yes
+        value:value
 
 # protoFn:  The class body, a function that returns an object.
 #           The result is merged into the actual prototype.
