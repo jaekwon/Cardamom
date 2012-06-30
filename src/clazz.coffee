@@ -1,5 +1,3 @@
-_ = require 'underscore'
-
 # Is the value a property descriptor?
 isPropertyDescriptor = (obj) ->
   typeof obj is 'object' and (obj.get or obj.set or obj.value)

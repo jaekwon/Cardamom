@@ -1,4 +1,4 @@
-{B, Fn, clazz, bisect} = require 'cardamom'
+{Fn, clazz, bisect} = require 'cardamom'
 assert = require 'assert'
 
 @run = ->
@@ -62,20 +62,6 @@ assert = require 'assert'
     assert.equal  (   fn 1, 2, 3),                       '1 2 true 3'
     assert.equal  (   fn 1, 2),                          '1 2 true '
     assert.equal  (   fn 1, 2, undefined, undefined),    '1 2 true ,'
-
-  # Test B(ind)
-  do ->
-    class Foo
-
-      foo:B -> "#{@}"
-
-      toString: -> '<Foo>'
-
-      B.ind @
-
-    f = new Foo
-    f_foo = f.foo
-    assert.equal f_foo(), f.foo()
 
   # Test clazz
   do ->
