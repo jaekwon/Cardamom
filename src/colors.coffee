@@ -1,8 +1,6 @@
 # ripped from fabric.
-
 _wrap_with = (code) ->
-  return (text, bold) ->
-    return "\x1b[#{if bold then '1;' else ''}#{code}m#{text}\x1b[0m"
+  (text, bold) -> "\x1b[#{if bold then '1;' else ''}#{code}m#{text}\x1b[0m"
 
 @black = _wrap_with('30')
 @red = _wrap_with('31')

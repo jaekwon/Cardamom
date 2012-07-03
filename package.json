@@ -5,8 +5,7 @@
   "author": "Jae Kwon <jkwon.work@gmail.com>",
   "repository": {"type": "git", "url": "git://github.com/jaekwon/Cardamom.git"},
   "dependencies": {
-      "coffee-script": ">= 1.1.3",
-      "underscore": ">= 1.2.3"
+      "coffee-script": ">= 1.1.3"
     },
   "keywords": ["argument", "type checking", "function", "node.js", "coffeescript"],
   "main": "./lib/cardamom",
