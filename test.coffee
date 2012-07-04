@@ -1,4 +1,4 @@
-{Fn, clazz, bisect} = require 'cardamom'
+{collections:{Set}, Fn, clazz, bisect} = require 'cardamom'
 assert = require 'assert'
 
 @run = ->
@@ -212,6 +212,11 @@ assert = require 'assert'
     bisect.insort_left a, 24, cmp:cmp
     assert.equal ''+a, ''+[1,2,3,24,4,4,14,5]
     assert.equal bisect.bisect_right(a, 4, cmp:cmp), 7
+
+  # Collections test
+  do ->
+    s = new Set([1,2,3])
+    assert.ok s.elements?, "Where'd they go?"
 
   # TESTS COMPLETE
   console.log "Tests ok!"
