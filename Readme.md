@@ -49,4 +49,3 @@ Bar = clazz 'Bar', Foo, (supr) ->
     console.log "@", @, "@constructor", @constructor, "@super", @super
 
 ```
-Note: Unlike methods bound with $:, properties bound with $: arent own properties of objects, but they are own properties of the prototype.
