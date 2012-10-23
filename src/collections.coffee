@@ -1,4 +1,4 @@
-{clazz} = require 'cardamom/src/clazz'
+{clazz} = require 'cardamom/lib/clazz'
 
 # not implemented yet
 @Set = Set = clazz 'Set', ->

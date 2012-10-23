@@ -4,7 +4,9 @@ log = console.log
 task 'build', ->
   run 'coffee -o lib -c src/*.coffee'
 
-task 'test', -> require('./test').run()
+task 'test', ->
+  run 'cake build', ->
+    require('./test').run()
 
 run = (args...) ->
   for a in args
